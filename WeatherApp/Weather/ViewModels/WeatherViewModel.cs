@@ -58,13 +58,21 @@ namespace WeatherApp.Weather.ViewModels
 
         internal async Task GetWeather()
         {
-            if (string.IsNullOrWhiteSpace(Address)) return;
-            SetLoading();
+            try
+            {
+                if (string.IsNullOrWhiteSpace(Address)) return;
+                SetLoading();
 
-            var logic = new WeatherLogic();
+                var logic = new WeatherLogic();
 
-            (Forecast, ErrorMessage) = await logic.GetForecast(Address);
-            IsLoading = false;
+                (Forecast, ErrorMessage) = await logic.GetForecast(Address);
+                IsLoading = false;
+            }
+            catch(Exception e)
+            {
+                ErrorMessage = e.StackTrace;
+                IsLoading = false;
+            }
         }
 
         private void SetLoading()

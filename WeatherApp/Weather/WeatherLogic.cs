@@ -29,7 +29,7 @@ namespace WeatherApp.Weather
             var forecast = new Forecast();
 
             forecast.Today = BuildDataPointModel(apiForecast.Current);
-            var today = apiForecast.Daily.First(x => x.Time == DateTime.Now.Date);
+            var today = apiForecast.Daily.First();
             forecast.Today.TemperatureHigh = today.TemperatureHigh;
             forecast.Today.TemperatureLow = today.TemperatureLow;
             forecast.Today.ChanceOfRain = today.PrecipitationProbability.GetValueOrDefault() * 100;
