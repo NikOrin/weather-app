@@ -12,20 +12,18 @@ namespace WeatherApp.Weather.ViewModels
 {
     public class WeatherViewModel : INotifyPropertyChanged
     {
-        public string TestString { get => "Hello World!!!!!"; }
-
-        public string Address { get => _address; set => _address = value; }
         private string _address;
+        public string Address { get => _address; set => _address = value; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private Forecast _test;
-        public Forecast Test
+        private Forecast _forecast;
+        public Forecast Forecast
         {
-            get => _test;
+            get => _forecast;
             set {
-                _test = value;
-                OnPropertyChanged("Test");
+                _forecast = value;
+                OnPropertyChanged("Forecast");
             }
         }
 
@@ -36,9 +34,11 @@ namespace WeatherApp.Weather.ViewModels
 
         internal async Task GetWeather()
         {
+            if (string.IsNullOrWhiteSpace(Address)) return;
+
             var logic = new WeatherLogic();
             
-            Test = await logic.GetForecast(Address);
+            Forecast = await logic.GetForecast(Address);
         }
 
         protected void OnPropertyChanged(string propertyName)

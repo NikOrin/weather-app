@@ -9,5 +9,7 @@ namespace WeatherApp.Weather.Models
         public double? Temperature { get; set; }
         public double? TemperatureLow { get; set; }
         public double? TemperatureHigh { get; set; }
+        public double? TemperatureFeelsLike { get; set; }
+        public double ChanceOfRain { get; set; }
     }
 }

@@ -28,7 +28,13 @@ namespace WeatherApp.Weather
         {
             var forecast = new Forecast();
 
-            forecast.Current = BuildDataPointModel(apiForecast.Current);
+            forecast.Today = BuildDataPointModel(apiForecast.Current);
+            var today = apiForecast.Daily.First(x => x.Time == DateTime.Now.Date);
+            forecast.Today.TemperatureHigh = today.TemperatureHigh;
+            forecast.Today.TemperatureLow = today.TemperatureLow;
+            forecast.Today.ChanceOfRain = today.PrecipitationProbability.GetValueOrDefault() * 100;
+
+            forecast.Hourly = apiForecast.Hourly.Select(x => BuildDataPointModel(x));
 
             return forecast;
         }
@@ -41,7 +47,9 @@ namespace WeatherApp.Weather
                 Summary = apiDataPoint.Summary,
                 Temperature = apiDataPoint.Temperature,
                 TemperatureHigh = apiDataPoint.TemperatureHigh,
-                TemperatureLow = apiDataPoint.TemperatureLow
+                TemperatureLow = apiDataPoint.TemperatureLow,
+                TemperatureFeelsLike = apiDataPoint.TemperatureFeelsLike,
+                ChanceOfRain = apiDataPoint.PrecipitationProbability.GetValueOrDefault() * 100
             };
         }
     }

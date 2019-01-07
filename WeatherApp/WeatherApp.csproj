@@ -80,7 +80,7 @@
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
     <Reference Include="WeatherApiProxy, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\WeatherApiProxy.1.0.10\lib\net471\WeatherApiProxy.dll</HintPath>
+      <HintPath>..\packages\WeatherApiProxy.1.0.13\lib\net471\WeatherApiProxy.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
@@ -91,6 +91,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Resources\NullToVisibilityConverter.cs" />
     <Compile Include="Weather\Models\DataPoint.cs" />
     <Compile Include="Weather\Models\Forecast.cs" />
     <Compile Include="Weather\ViewModels\WeatherViewModel.cs" />
@@ -102,6 +103,10 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Resources\StyleDictionary.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Weather\Views\WeatherView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
