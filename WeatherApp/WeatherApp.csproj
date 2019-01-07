@@ -91,6 +91,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Resources\InverseBooleanToVisibilityConverter.cs" />
     <Compile Include="Resources\NullToVisibilityConverter.cs" />
     <Compile Include="Weather\Models\DataPoint.cs" />
     <Compile Include="Weather\Models\Forecast.cs" />

@@ -16,4 +16,30 @@
         <Setter Property="FontWeight" Value="Bold"/>
         <Setter Property="HorizontalAlignment" Value="Center"/>
     </Style>
+
+    <Style TargetType="TextBlock" x:Key="TemperatureHigh">
+        <Setter Property="Foreground" Value="Black"/>
+    </Style>
+    <Style TargetType="TextBlock" x:Key="TemperatureLow">
+        <Setter Property="Foreground" Value="DarkGray"/>
+    </Style>
+
+    <Style TargetType="TextBlock" x:Key="ErrorMessage">
+        <Setter Property="Foreground" Value="Red"/>
+        <Setter Property="FontSize" Value="16"/>
+    </Style>
+
+    <Style x:Key="AlternateRowColors" TargetType="{x:Type ListViewItem}">
+        <Style.Triggers>
+            <Trigger Property="ItemsControl.AlternationIndex" Value="0">
+                <Setter Property="Background" Value="LightCyan"></Setter>
+            </Trigger>
+            <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                <Setter Property="Background" Value="White"></Setter>
+            </Trigger>
+            <Trigger Property="IsSelected" Value="True">
+                <Setter Property="Background" Value="Orange"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
 </ResourceDictionary>

@@ -14,14 +14,14 @@ namespace WeatherApp.Weather
 {
     public class WeatherLogic
     {
-        public async Task<Forecast> GetForecast(string address)
+        public async Task<(Forecast, string)> GetForecast(string address)
         {
             var proxy = new WeatherProxy(ConfigurationManager.AppSettings["WeatherApiBaseUri"].TrimEnd('/'));
             var response = await proxy.GetForecast(address);
 
-            if (!response.IsSuccess) return null;
+            if (!response.IsSuccess) return (null, response.ErrorMessage);
 
-            return BuildForecastModel(response.Data);
+            return (BuildForecastModel(response.Data), null);
         }
 
         private Forecast BuildForecastModel(ApiForecast apiForecast)
@@ -35,6 +35,7 @@ namespace WeatherApp.Weather
             forecast.Today.ChanceOfRain = today.PrecipitationProbability.GetValueOrDefault() * 100;
 
             forecast.Hourly = apiForecast.Hourly.Select(x => BuildDataPointModel(x));
+            forecast.Daily = apiForecast.Daily.Select(x => BuildDataPointModel(x));
 
             return forecast;
         }

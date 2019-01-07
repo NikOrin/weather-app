@@ -12,6 +12,7 @@ namespace WeatherApp.Weather.ViewModels
 {
     public class WeatherViewModel : INotifyPropertyChanged
     {
+        #region Properties
         private string _address;
         public string Address { get => _address; set => _address = value; }
 
@@ -27,18 +28,51 @@ namespace WeatherApp.Weather.ViewModels
             }
         }
 
+        private string _errorMessage;
+        public string ErrorMessage
+        {
+            get => _errorMessage;
+            set
+            {
+                _errorMessage = value;
+                OnPropertyChanged("ErrorMessage");
+            }
+        }
+
+        private bool _isLoading;
+        public bool IsLoading
+        {
+            get => _isLoading;
+            set
+            {
+                _isLoading = value;
+                OnPropertyChanged("IsLoading");
+            }
+        }
+        #endregion
+
         public WeatherViewModel()
         {
-            
+            IsLoading = false;
         }
 
         internal async Task GetWeather()
         {
+            SetLoading();
+
             if (string.IsNullOrWhiteSpace(Address)) return;
 
             var logic = new WeatherLogic();
-            
-            Forecast = await logic.GetForecast(Address);
+
+            (Forecast, ErrorMessage) = await logic.GetForecast(Address);
+            IsLoading = false;
+        }
+
+        private void SetLoading()
+        {
+            IsLoading = true;
+            ErrorMessage = null;
+            Forecast = null;
         }
 
         protected void OnPropertyChanged(string propertyName)

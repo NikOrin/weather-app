@@ -7,10 +7,11 @@
         xmlns:ViewModels="clr-namespace:WeatherApp.Weather.ViewModels" x:Class="WeatherApp.Weather.Views.WeatherView"
         xmlns:l="clr-namespace:WeatherApp.Resources"
         mc:Ignorable="d"
-        Title="WeatherView" Height="450" Width="800">
+        Title="WeatherView" Height="500" Width="800">
     <Window.Resources>
         <ResourceDictionary>
             <l:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
+            <l:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter"/>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Resources/StyleDictionary.xaml"/>
             </ResourceDictionary.MergedDictionaries> 
@@ -54,6 +55,7 @@
                 <RowDefinition Height="Auto"/> <!--Current weather basic-->
                 <RowDefinition Height="Auto"/> <!--Hourly-->
                 <RowDefinition Height="Auto"/> <!--Daily-->
+                <RowDefinition Height="Auto"/> <!--Extremes-->
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
@@ -68,7 +70,8 @@
                 <TextBlock HorizontalAlignment="Center"
                            Style="{StaticResource Header2}"
                            Text="{Binding Path=Forecast.Today.Summary}"/>
-                <StackPanel  Orientation="Horizontal">
+                <StackPanel  Orientation="Horizontal"
+                             Margin="10,0,0,0">
                     <TextBlock Margin="5"
                                Style="{StaticResource BoldLabel}"
                                Text="Feels like:"/>
@@ -87,7 +90,8 @@
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Style="{StaticResource BoldLabel}"
-                               Text="Chance of Percipitation:"/>
+                               Text="Chance of Percipitation:"
+                               Margin="70,5,5,5"/>
                     <TextBlock HorizontalAlignment="Center"
                                Margin="5"
                                Text="{Binding Path=Forecast.Today.ChanceOfRain, StringFormat={}{0}%}"/>
@@ -96,20 +100,161 @@
             
             <!--Hourly-->
             <ListView Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                      Margin="10"
                       ItemsSource="{Binding Path=Forecast.Hourly}"
-                      ScrollViewer.VerticalScrollBarVisibility="Auto"
-                      MaxHeight="200">
+                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                      MaxHeight="200"
+                      ItemContainerStyle="{StaticResource AlternateRowColors}"
+                      AlternationCount="2"
+                      Name="HourlyList">
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            
+                        </StackPanel>
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Vertical"
                                     Margin="5">
-                            <TextBlock Text="{Binding Path=Time, StringFormat={}{0:hh tt}}"/>
-                            <TextBlock Text="{Binding Path=Temperature, StringFormat={}{0:#,#.0} °F}"/>
+                            <TextBlock Text="{Binding Path=Time, StringFormat={}{0:hh tt}}"
+                                       Style="{StaticResource BoldLabel}"/>
+                            <TextBlock Margin="5,0" 
+                                       Text="{Binding Path=Temperature, StringFormat={}{0:#,#.0} °F}"/>
                         </StackPanel>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
+            <!--Hourly Details (turn into UserControl-->
+            <Grid Grid.Row="1" Grid.Column="2"
+                  Margin="10"
+                  DataContext="{Binding ElementName=HourlyList, Path=SelectedItem}"
+                  Visibility="{Binding ElementName=HourlyList, Path=SelectedItem, Converter={StaticResource NullToVisibilityConverter}}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0"
+                           Text="{Binding Path=Time, StringFormat=MM/dd  |  hh tt}"
+                           Style="{StaticResource BoldLabel}"/>
+                <TextBlock Grid.Row="0" Grid.Column="1"
+                           Text="{Binding Path=Temperature, StringFormat={}{0:#,#.0} °F}"
+                           Style="{StaticResource BoldLabel}"/>
+
+                <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                            Orientation="Horizontal">
+                    <TextBlock Style="{StaticResource BoldLabel}"
+                               Text="Precipitation:"
+                               Margin="5"/>
+                    <TextBlock Margin="5"
+                               Text="{Binding Path=ChanceOfRain, StringFormat={}{0}%}"/>
+                </StackPanel>
+            </Grid>
+            
             <!--Daily-->
+            <ListView Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
+                      Margin="10"
+                      ItemsSource="{Binding Path=Forecast.Daily}"
+                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                      MaxHeight="200"
+                      ItemContainerStyle="{StaticResource AlternateRowColors}"
+                      AlternationCount="2"
+                      Name="DailyList">
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal">
+
+                        </StackPanel>
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Vertical"
+                                    Margin="5">
+                            <TextBlock Text="{Binding Path=Time, StringFormat={}MM/dd dddd}"
+                                       Style="{StaticResource BoldLabel}"/>
+                            <StackPanel Orientation="Horizontal"
+                                        Margin="5,0">
+                                <TextBlock Text="{Binding Path=TemperatureHigh, StringFormat={}{0:#,#.0} °F}"
+                                           Style="{StaticResource TemperatureHigh}"/>
+                                <TextBlock Text="/"
+                                           Margin="5,0"/>
+                                <TextBlock Text="{Binding Path=TemperatureLow, StringFormat={}{0:#,#.0} °F}"
+                                           Style="{StaticResource TemperatureLow}"/>                                
+                            </StackPanel>
+                            
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <!--Daily Details (turn into UserControl-->
+            <Grid Grid.Row="2" Grid.Column="2"
+                  Margin="10"
+                  DataContext="{Binding ElementName=DailyList, Path=SelectedItem}"
+                  Visibility="{Binding ElementName=DailyList, Path=SelectedItem, Converter={StaticResource NullToVisibilityConverter}}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0"
+                           Text="{Binding Path=Time, StringFormat=MM/dd  |  hh tt}"
+                           Style="{StaticResource BoldLabel}"/>
+
+                <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                            Orientation="Horizontal">
+                    <TextBlock Style="{StaticResource BoldLabel}"
+                               Text="Precipitation:"
+                               Margin="5"/>
+                    <TextBlock Margin="5"
+                               Text="{Binding Path=ChanceOfRain, StringFormat={}{0}%}"/>
+                </StackPanel>
+
+                <StackPanel Grid.Row="2" Grid.Column="0"
+                            Orientation="Horizontal">
+                    <TextBlock Style="{StaticResource BoldLabel}"
+                               Text="High:"
+                               Margin="5"/>
+                    <TextBlock Margin="5"
+                               Text="{Binding Path=TemperatureHigh, StringFormat={}{0:#,#.0} °F}"/>
+                </StackPanel>
+                <StackPanel Grid.Row="2" Grid.Column="1"
+                            Orientation="Horizontal">
+                    <TextBlock Style="{StaticResource BoldLabel}"
+                               Text="Low:"
+                               Margin="5"/>
+                    <TextBlock Margin="5"
+                               Text="{Binding Path=TemperatureLow, StringFormat={}{0:#,#.0} °F}"/>
+                </StackPanel>
+            </Grid>
+            
+            <!--Extremes-->
+            
         </Grid>
+
+        <!--Loading and error handling-->
+        <TextBlock Grid.Row="1" Grid.Column="1"
+                   Margin="250, 100"
+                   Visibility="{Binding Path=IsLoading, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
+                   Style="{StaticResource Header1}"
+                   Text="Loading..."/>
+        <TextBlock Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
+                   Style="{StaticResource ErrorMessage}"
+                   Margin="250,100"
+                   Width="700"
+                   TextWrapping="Wrap"
+                   Visibility="{Binding Path=ErrorMessage, Converter={StaticResource NullToVisibilityConverter}}"
+                   Text="{Binding Path=ErrorMessage}"/>
     </Grid>
 </Window>
